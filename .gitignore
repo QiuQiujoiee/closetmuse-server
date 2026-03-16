@@ -1,0 +1,55 @@
+# Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables files
+.env*
+
+# Mac system files
+.DS_Store
+
+# Prisma
+prisma/dev.db
+
+# Uploads
+uploads/
+
+# Data
+/data/db.json
+
+# VS Code settings
+.vscode/
+
+# Build output
+/dist/
+/build/
+
+# Docker
+*.pid
+
+# Misc
+*.tgz
+.idea/
+*.swp
+
+# Ignore coverage
+coverage/
+
+# Ignore test output
+test-results/

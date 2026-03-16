@@ -1,0 +1,114 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  username     String?
+  avatarUrl    String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  items     Item[]
+  outfits   Outfit[]
+  likes     OutfitLike[]
+  favorites OutfitFavorite[]
+  comments  OutfitComment[]
+}
+
+model Item {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  category  String?
+  color     String?
+  season    String?
+  imageUrl  String?
+  tags      String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfitItems OutfitItem[]
+}
+
+model Outfit {
+  id             String   @id @default(cuid())
+  userId         String
+  notes          String   @default("")
+  isPublic       Boolean  @default(false)
+
+  likesCount     Int      @default(0)
+  favoritesCount Int      @default(0)
+  commentsCount  Int      @default(0)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     OutfitItem[]
+  likes     OutfitLike[]
+  favorites OutfitFavorite[]
+  comments  OutfitComment[]
+}
+
+model OutfitItem {
+  outfitId  String
+  itemId    String
+  createdAt DateTime @default(now())
+
+  outfit Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@id([outfitId, itemId])
+  @@index([itemId])
+}
+
+model OutfitLike {
+  outfitId  String
+  userId    String
+  createdAt DateTime @default(now())
+
+  outfit Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([outfitId, userId])
+  @@index([userId])
+}
+
+model OutfitFavorite {
+  outfitId  String
+  userId    String
+  createdAt DateTime @default(now())
+
+  outfit Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([outfitId, userId])
+  @@index([userId])
+}
+
+model OutfitComment {
+  id        String   @id @default(cuid())
+  outfitId  String
+  userId    String
+  content   String
+  parentId  String?
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  outfit Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([outfitId, createdAt])
+  @@index([parentId])
+}
